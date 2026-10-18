@@ -1,28 +1,28 @@
 
 import os
 import hashlib
-from typing import Annotated
 
 from fastmcp import FastMCP
-from fastmcp.server.dependencies import CurrentHeaders
+from fastmcp.server.dependencies import get_http_headers
 
 mcp = FastMCP("Exam Challenge Server")
 
-EMAIL = "23f2000505@ds.study.iitm.ac.in"
+EMAIL = "23f2000505@ds.study.iitm.ac.in".strip().lower()
 
 
 @mcp.tool()
-def solve_challenge(
-    headers: Annotated[dict, CurrentHeaders()]
-) -> str:
-    """Solve the exam challenge from the HTTP request header."""
+def solve_challenge() -> str:
+    """Return the hash derived from the current HTTP challenge header."""
+    headers = get_http_headers()
     challenge = headers.get("x-exam-challenge")
 
     if not challenge:
         raise ValueError("Missing X-Exam-Challenge header")
 
-    text = f"{challenge}:{EMAIL.strip().lower()}"
-    return hashlib.sha256(text.encode("utf-8")).hexdigest()[:16]
+    message = f"{challenge}:{EMAIL}"
+    digest = hashlib.sha256(message.encode("utf-8")).hexdigest()
+
+    return digest[:16]
 
 
 if __name__ == "__main__":
