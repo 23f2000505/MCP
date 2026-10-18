@@ -48,7 +48,7 @@ class AcceptHeaderMiddleware:
         await self.app(scope, receive, send)
 
 
-app = AcceptHeaderMiddleware(mcp.http_app(path="/mcp"))
+app = AcceptHeaderMiddleware(mcp.http_app(path="/"))
 
 if __name__ == "__main__":
     uvicorn.run(
